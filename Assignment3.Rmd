@@ -1,0 +1,175 @@
+---
+title: "Data607 - Week 3 Assignment"
+author: "Anthony Josue Roman"
+date: "2024-09-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(readr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+This assignment will use the following packages:
+
+```{r eval=FALSE}
+library(readr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+## Question 1
+
+Utilizing the 173 majors listed on [fivethirtyeight](https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/). The link to the dataset is within this github link [here](https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/majors-list.csv), which will also be uploaded onto my github [page](https://github.com/spacerome/Data607_Assignment_3). Using the following data from the csv file the following code will identify the majors that contain either "Data" or "Statistics".
+
+```{r echo=TRUE}
+a <- getwd() # Just to set directory
+setwd(a)
+majors <- read.csv("majors-list.csv")
+
+head(majors)
+
+grep("DATA|STATISTICS", majors$Major, value = TRUE)
+
+```
+
+From the following code block, of the 173 majors, only 3 majors consist of "Data" or "Statistics".
+
+## Question 2
+
+The following code block will convert the following data:
+
+`[1] "bell pepper"  "bilberry"     "blackberry"   "blood orange"`
+
+`[5] "blueberry"    "cantaloupe"   "chili pepper" "cloudberry"`  
+
+`[9] "elderberry"   "lime"         "lychee"       "mulberry"`    
+
+`[13] "olive"        "salal berry"`
+
+to
+
+`c("bell pepper", "bilberry", "blackberry", "blood orange", "blueberry", "cantaloupe",`
+`"chili pepper", "cloudberry", "elderberry", "lime", "lychee", "mulberry", "olive", "salal berry")`
+
+```{r echo=TRUE}
+
+# Initialization
+
+fruitsMain <- '[1] "bell pepper"  "bilberry"     "blackberry"   "blood orange"
+
+[5] "blueberry"    "cantaloupe"   "chili pepper" "cloudberry"  
+
+[9] "elderberry"   "lime"         "lychee"       "mulberry"    
+
+[13] "olive"        "salal berry"'
+
+# Remove brackets and numbers
+fruitsMod <- gsub('\\[\\d+\\]|\\s{2,}', '', fruitsMain)
+
+# Splices at the quotes
+
+fruitsModded <- unlist(strsplit(fruitsMod, '"')) 
+
+# removes empty white spaces
+
+fruitsModded <- trimws(fruitsModded[fruitsModded != "" & fruitsModded != " "])
+
+fruitsModded <- paste0('c(', paste(shQuote(fruitsModded), collapse = ", "), ')')
+
+#Print final product
+
+cat(fruitsModded)
+
+```
+
+## Question 3
+
+The following problems will be listed below to explain what will happen to each expression.
+
+  a) `(.)\\1\\1`
+  
+```{r echo=TRUE}
+
+alpha <- c("aaabcdef", "cheese", "banana", "wawawawaw", "Starlette", "Aurora", "Thalassa", "Apollo", "Bobobo", "haroldlorah")
+
+str_view_all(alpha, "(.)\\1\\1", match=TRUE)
+
+```
+This highlights any character that is repeated three times.
+
+  b) `"(.)(.)\\2\\1"`
+  
+```{r echo=TRUE}
+
+str_view(alpha, "(.)(.)\\2\\1", match=TRUE)
+
+```
+
+This highlights any characters with xyyx.
+
+  c) `(..)\\1`
+
+```{r echo=TRUE}
+
+str_view(alpha, "(..)\\1", match=TRUE)
+
+```
+
+This one highlights the characters with xyxy.
+
+  d) `"(.).\\1.\\1"`
+  
+```{r echo=TRUE}
+
+str_view(alpha, "(.).\\1.\\1", match=TRUE)
+
+```
+This looks for a single character that  repeats three times consecutively.
+
+  e) `"(.)(.)(.).*\\3\\2\\1"`
+
+```{r echo=TRUE}
+
+str_view(alpha, "(.)(.)(.).*\\3\\2\\1", match=TRUE)
+
+```
+This is basically where the first three characters are followed by their reverse after some random text, this can also be names that are palindromic.
+
+## Question 4
+
+The following code blocks will answer the following questions below:
+  
+  a) Start and end with the same character. Answer: `^(.).*\\1$`
+
+```{r echo=TRUE}
+
+str_view(alpha, "^(.).*\\1$", match=TRUE)
+
+```
+  b) Contain a repeated pair of letters (e.g. "church" contains "ch" repeated twice.) Answer: `(..).*\\1`
+  
+```{r echo=TRUE}
+
+str_view(alpha, "(..).*\\1", match=TRUE)
+
+```
+  c) Contain one letter repeated in at least three places (e.g. "eleven" contains three "e"s.) Answer: `(.).*\\1.*\\1`
+  
+```{r echo=TRUE}
+
+str_view(alpha, "(.).*\\1.*\\1", match=TRUE)
+
+```
+
